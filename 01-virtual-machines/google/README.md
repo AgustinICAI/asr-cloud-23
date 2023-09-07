@@ -14,21 +14,19 @@ Para ello:
 1. Ejecutar:
     ```shell
     $ gcloud beta compute instance-templates create asr-template-vm \
-      --machine-type=e2-medium \
-      --tags=http-server,https-server \
-      --image=debian-10-buster-v20210916 \
-      --image-project=debian-cloud \
-      --boot-disk-size=10GB \
-      --metadata-from-file=startup-script=startup-script.sh
+    --machine-type=e2-medium \
+    --tags=http-server,https-server \
+    --create-disk=auto-delete=yes,boot=yes,image=projects/ubuntu-os-cloud/global/images/ubuntu-2204-jammy-v20230829,size=10 \
+    --labels=practica=01 \
+    --metadata-from-file=startup-script=startup-script.sh
     ```
     
     Tras lo que deberíamos recibir un mensaje parecido a:
     ```shell
-    WARNING: You have selected a disk size of under [200GB]. This may result in poor I/O performance. For more information, see: https://developers.google.com/compute/docs/disks#performance.
-    Created [https://www.googleapis.com/compute/beta/projects/innate-infusion-327910/global/instanceTemplates/my-first-vm].
-    
-    NAME         MACHINE_TYPE  PREEMPTIBLE  CREATION_TIMESTAMP
-    asr-template-vm  e2-medium                  2021-10-04T02:26:54.922-07:00
+    Created [https://www.googleapis.com/compute/beta/projects/icai-asr-23/global/instanceTemplates/asr-template-vm].
+    NAME             MACHINE_TYPE  PREEMPTIBLE  CREATION_TIMESTAMP
+    asr-template-vm  e2-medium                  2023-09-07T07:31:27.935-07:00
+
     ```
 
 2. Para saber qué prototipos tenemos creados en nuestro proyecto, podemos listarlos mediante
