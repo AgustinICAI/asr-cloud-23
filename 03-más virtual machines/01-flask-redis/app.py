@@ -2,7 +2,7 @@ import os
 
 from flask import Flask, request, jsonify
 from redis import Redis
-
+import json
 
 app = Flask(__name__)
 redis_ip = os.environ["REDIS_IP_GCP"]
@@ -22,11 +22,11 @@ def index():
 
     if request.method == "POST":
         name = request.json["name"]
-        redis_server.rpush("students", {"name": name})
+        redis_server.rpush("students",name)
         return jsonify({"name": name})
 
     if request.method == "GET":
-        return jsonify(redis_server.lrange("students", 0, -1))
+        return redis_server.lrange("students", 0, -1)
 
 
 @app.route("/reset", methods=["POST", "GET"])
