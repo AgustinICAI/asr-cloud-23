@@ -3,26 +3,19 @@
 source "${PWD}/config.ini"
 source "color.sh"
 
-delete_redis_server() {
-  echo "$(red_text "[-] Deleting VM:") $redis_server (img: $redis_image) ..."
-  gcloud compute instances delete $redis_server --quiet
-  echo "$(red_text "[-] Deleting:") $redis_server done!"
+delete_servers() {
+  echo "$(red_text "[-] Deleting VMs")..."
+  gcloud compute instances list | grep RUNNING | awk '{printf "gcloud compute instances delete %s --zone %s --quiet\n", $1, $2}' | bash
+  echo "$(red_text "[-] Deleting VMs ") done!"
 }
 
 delete_firewall_rules() {
-  echo "$(red_text "[-] Deleting firewall rules: $app_port") ..."
+  echo "$(red_text "[-] Deleting firewall rules") ..."
+  gcloud compute firewall-rules list | grep -v "NAME" | awk '{printf "gcloud compute firewall-rules delete %s --quiet\n",$1}' | bash
 
-  gcloud compute firewall-rules delete "default-allow-external-$app_port" --quiet
-
-  echo "$(red_text "[-] Deleting firewall rules:") done!"
+  echo "$(red_text "[-] Deleting firewall rules ") done!"
 }
 
-delete_app() {
-  echo "$(red_text "[-] Deleting App:") $app_name ..."
-  gcloud compute instances delete $app_name --quiet
-  echo "$(red_text "[-] All the resources were deleted succesfully! 🍰 🍰 🍰")"
-}
 
 delete_firewall_rules
-delete_redis_server
-delete_app
+delete_servers

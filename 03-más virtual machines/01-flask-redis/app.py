@@ -23,7 +23,7 @@ def index():
     if request.method == "POST":
         name = request.json["name"]
         redis_server.rpush("students",name)
-        return jsonify({"name": name})
+        return {"name": name}
 
     if request.method == "GET":
         return redis_server.lrange("students", 0, -1)
