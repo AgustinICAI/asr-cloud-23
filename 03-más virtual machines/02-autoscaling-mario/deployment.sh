@@ -32,7 +32,7 @@ create_firewall_rule() {
       --network=default \
       --action=ALLOW \
       --rules=tcp:"$app_port" \
-      --source-ranges=0.0.0.0/0
+      --source-ranges=$(curl ifconfig.me)
 }
 
 reserve_load_balancer_ip() {
