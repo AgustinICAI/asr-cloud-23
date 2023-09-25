@@ -29,9 +29,6 @@ create_firewall_rules() {
 }
 
 deploy_redis_server() {
-
-  
-
   echo "$(green_text "[+] Creating VM:") $redis_server (img: ${redis_image}) ..."
   gcloud compute instances create-with-container $redis_server \
       --machine-type="$machine_type" \
@@ -70,3 +67,6 @@ build_and_deploy_app() {
 create_firewall_rules
 deploy_redis_server
 build_and_deploy_app
+
+
+
