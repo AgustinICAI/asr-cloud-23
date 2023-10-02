@@ -10,6 +10,7 @@ En esta práctica vamos a realizar el aprovisionamiento de la instancia de Googl
 ## 1. Creación Service Account y descargue las claves (.json)
 Es necesario crear una Service Account en GCP y darle permisos, para que posteriormente esta sea usada por Ansible para realizar los despliegues y configuraciones.
 Las Service Account se utilizan para la autenticación entre software - software (aplicación - aplicación). En nuestro caso (GCP — Ansible)
+Habrá que seguir la regla del mínimo privilegio, por lo que se darán estos permisos:
 
 
 #### Dar el nombre y los permisos a la Service Account
@@ -26,7 +27,7 @@ Después de crear la SA, descarga una key en local, ya que usaremos este fichero
 
 ```
 Create new key -> Download JSON file
-``
+```
 
 ## 2. Asociar una clave SSH a la SA que hemos creado
 
@@ -41,7 +42,6 @@ gcloud auth activate-service-account --key-file=<fichero .json descargado antes>
 
 # Generamos unas claves ssh específicas para esta SA, y se las vamos a asignar a la service account
 ssh-keygen -f ~/.ssh/ssh-key-ansible-sa
-# Poned el path absoluto de la ruta del fichero (no la relativa a la home)
 gcloud compute os-login ssh-keys add --key-file=ssh-key-ansible-sa.pub
 
 # Checkear que todo anda bien
@@ -91,11 +91,11 @@ main.yml: este archivo es el playbook principal. La mayoría de las cosas se exp
   vars:
       gcp_project: icai-293810 #Setear vuestro proyecto
       gcp_cred_kind: serviceaccount
-      gcp_cred_file: "/home/agus/ICAI/2022/asr/asr-cloud/04-creacion-maquinas-ansible/icai-293810-1ebd82e69568.json" #Aqui setear con la ruta de vuestra SA
+      gcp_cred_file: "/home/....../icai-293810-1ebd82e69568.json" #Aqui setear con la ruta de vuestra SA
       region: "europe-west1"
       zone: "europe-west1-d"
       machine_type: "n1-standard-1"
-      image: "projects/centos-cloud/global/images/centos-7-v20220822"
+      image: "projects/centos-cloud/global/images/centos-7-v20230912"
 
   tasks:
    - name: Create private IP address to the VM instance
@@ -203,6 +203,14 @@ roles/simple-web/files/index.html : archivo del sitio web
 El paso final para resumir todo el código es ejecutar el playbook de ansible.
 ```shell
 $ ansible-playbook main.yml -u sa_<UID de la SA>
+
+### Si anterior comando te falla, puede que haga falta instalar algunas librerías de python que usa ansible en esta plantilla
+python3 -m pip install --upgrade google-auth 
+
+### Si lo anterior falla, también puede ser porque es necesario confiar en los host automáticamente. Para ello es necesario modificar el fichero /etc/ansible/ansible.cfg y añadir lo siguiente
+[defaults]
+host_key_checking = False
+
 ```
 Para el UID de la SA -> Consola de GCP -> IAM -> Service Accounts -> Haga clic en la SA que creó y ahí tiene que aparecer el id de la SA.
 También se puede abrir el fichero de texto y vendrá ahí.
@@ -220,9 +228,6 @@ gcloud config set account a****a@g****.com
 gcloud compute instances list | grep RUNNING | awk '{printf "gcloud compute instances delete %s --zone %s --quiet\n", $1, $2}' | bash
 gcloud compute firewall-rules list | grep -v "NAME" | awk '{printf "gcloud compute firewall-rules delete %s --quiet\n",$1}' | bash
 
-##Configuración para confiar siempre de los nuevos hosts añadidos
-echo "[defaults]
-host_key_checking = False" > ansible.cfg
 
 ###LANZANDO EL ANSIBLE PLAYBOOK
 ansible-playbook main.yml -e "gcp_project=$gcp_project gcp_cred_file='/full/path/sa.json' zone='europe-west1-d'" -u "sa_$(jq -r .client_id /full/path/sa.json)" --key-file /full/path/.ssh/ssh-key-ansible-sa"
