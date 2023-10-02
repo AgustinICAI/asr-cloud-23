@@ -53,7 +53,7 @@ gcloud compute project-info add-metadata --metadata google-compute-default-regio
 # Confirmar que todo está correctamente configurado
 gcloud config get-value compute/region
 gcloud config get-value compute/zone
-gcloud config get-value enable-oslogin
+gcloud compute project-info describe | yq '.commonInstanceMetadata.items[] | select (.key == "enable-oslogin")'
 
 ```
 
