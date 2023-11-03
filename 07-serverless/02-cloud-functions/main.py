@@ -46,4 +46,5 @@ def get_urandom(request):
 ########################
 # Equivalent with CURL
 ########################
+# URL=https://${REGION}-${PROJECT_ID}.cloudfunctions.net/urandom-generator
 # curl -X POST $URL -H "Content-Type:application/json"  -d '{"a":10, "b":12}'

@@ -3,10 +3,10 @@
 ## !!! IMPORTANT:
 ## Uncomment the following line for the first running. After you've authenticated
 ## once, you won't need to run this line anymore:
-# gcloud auth application-default login
+gcloud auth application-default login
 
 # Check if blob name exists, else it's created
-gsutil ls -b gs://asr-cloud-test-01 || gsutil mb -l ASIA gs://asr-cloud-test-01
+gsutil ls -b gs://asr-cloud-test-01 || gsutil mb -l EUROPE-WEST1 gs://asr-cloud-test-01
 
 # Copy the example transaction in the desired bucket:
 gsutil cp transaction.csv gs://asr-cloud-test-01
@@ -24,4 +24,5 @@ gcloud functions deploy ingester-transactions \
         --trigger-resource asr-cloud-test-01 \
         --trigger-event google.storage.object.finalize \
         --memory 512MB \
-        --timeout 60s
+        --timeout 60s \
+        --docker-registry=artifact-registry

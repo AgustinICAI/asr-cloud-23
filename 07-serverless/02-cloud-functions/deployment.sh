@@ -6,4 +6,5 @@ gcloud functions deploy urandom-generator \
         --trigger-http \
         --memory 128MB \
         --timeout 60s \
-        --allow-unauthenticated
+        --allow-unauthenticated \
+        --docker-registry=artifact-registry
